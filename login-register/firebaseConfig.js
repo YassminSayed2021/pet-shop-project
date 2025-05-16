@@ -16,4 +16,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+console.log("🔥 Firebase Config Loaded: ", auth, provider);
+
 export { auth, provider };
