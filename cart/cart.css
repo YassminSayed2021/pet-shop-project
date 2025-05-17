@@ -1,0 +1,237 @@
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #e9672b;
+    }
+
+    header {
+  background-image: url("img/heder.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 100px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-shadow: 1px 1px 4px black;
+  border-radius: 8px;
+
+}
+.cart-header {
+  max-width: 1000px;
+  margin: 20px auto 0 auto;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.cart-header h1 {
+  font-size:40px;
+  margin: 0;
+  color: #e49d7c;
+}
+
+    .close-btn {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      text-decoration: none;
+      font-size: 24px;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 16px;
+      border-radius: 50%;
+      font-weight: bold;
+      z-index: 10;
+      transition: background 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .cart {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #f2f2f2;
+    }
+
+    .item-cell {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .item-img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quantity-controls button {
+      width: 25px;
+      height: 25px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .delete-btn {
+      margin-left: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .subtotal-checkout {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding: 16px;
+      background: #f1f1f1;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .subtotal-text {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .go-checkout {
+      background: #2a7a2a;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .go-checkout:hover {
+      background: #092407;
+    }
+
+    .empty-cart {
+      text-align: center;
+      margin: 50px auto;
+    }
+
+    .empty-cart img {
+      width: 180px;
+      margin-bottom: 20px;
+    }
+
+    .empty-cart p {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .empty-cart button {
+      background: #00c853;
+      padding: 12px 30px;
+      font-size: 16px;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .empty-cart button:hover {
+      background: #009624;
+    }
+
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .subtotal-checkout {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+    }
+    /* .exit-btn {
+  display: inline-block;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  z-index: 999;
+}
+
+.exit-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+} */
+.cute-dogs {
+  position: absolute;
+  bottom: 3px;
+  right: -80px;
+  width: 450px;
+  z-index: 100;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.cute-dogs img {
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.cute-dogs:hover img {
+  transform: scale(1.05) rotate(2deg);
+}
