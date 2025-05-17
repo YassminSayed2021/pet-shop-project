@@ -54,7 +54,7 @@
 </li>
     </ul>
 
-    <a href="#" class="navbar-action-btn">Login</a>
+    <a href="./login-register/index.html" class="navbar-action-btn">Login</a>
 
 </nav>
 
@@ -231,10 +231,12 @@
         </h2>
 
 
-  <ul class="grid-list">
+    <ul class="grid-list" id="product-list">
+
+
 
    
-
+<!-- 
     <li>
       <div class="product-card">
 
@@ -502,9 +504,11 @@
       </div>
     </li>
 
-  </ul>
+  </ul> -->
 
-</div>
+</ul>
+<div id="pagination" class="pagination"></div>
+
 </section>
 
 
@@ -599,7 +603,7 @@
     <span class="span">About Us</span>, Who we are
   </h2>
 
-   <section   class="cta has-bg-image" aria-label="cta" style="background-image: url('./assets/images/cta-bg.jpg')">
+   <section   class="cta has-bg-image" aria-label="cta" >
     <div class="container">
 
       <figure class="cta-banner">
@@ -703,7 +707,7 @@
 
 <!-- footer -->
 
-<footer class="footer" style="background-image: url('./assets/images/footer-bg.jpg')">
+<footer class="footer" >
 
     <div class="footer-top section">
       <div class="container">
@@ -885,5 +889,10 @@ New Cairo, Cairo, Egypt
         
 
    <script src="script.js"></script> 
+   
+  
+<script type="module" src="render_products.js"></script>
+<script type="module" src="login-register/firebaseConfig.js"></script>
+
 </body>
 </html>
