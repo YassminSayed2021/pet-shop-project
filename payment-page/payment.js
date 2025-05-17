@@ -18,7 +18,7 @@ function createFormGroup(id, labelText, type, placeholder, maxLength) {
     return group;
 }
 
-// Helper to create error message
+// Helper to create error msg
 function createError(id, text) {
     const error = document.createElement('div');
     error.id = id;
@@ -121,7 +121,12 @@ function createPaymentForm() {
     const cardHolderError = createError('card-holder-error', "Please enter the cardholder's name");
     cardHolderGroup.appendChild(cardHolderError);
     cardDetailsContainer.appendChild(cardHolderGroup);
+ 
 
+
+
+
+    
     // Flex group for Expiry and CVV
     const flexGroup = document.createElement('div');
     flexGroup.className = 'flex-group';
@@ -146,6 +151,21 @@ function createPaymentForm() {
     button.type = 'submit';
     button.textContent = 'Pay Now';
     form.appendChild(button);
+
+    // Cancel Button
+    const cancelButton = document.createElement('button');
+    cancelButton.type = 'button'; // Changed from submit to button to prevent form submission
+    cancelButton.textContent = 'Cancel';
+    //cancelButton.className = 'cancel-button';
+    cancelButton.addEventListener('click', () => {
+        form.reset();
+         const confirmCancel = confirm('Are you sure you want to cancel?');
+         if(confirmCancel){
+           window.location.href = 'pet-shop-project/index.html';
+         }
+        
+    });
+    form.appendChild(cancelButton);
 
     container.appendChild(form);
     document.getElementById('app').appendChild(container);
