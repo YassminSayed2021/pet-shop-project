@@ -64,7 +64,7 @@ registerForm.addEventListener('submit', (e) => {
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       alert(`✅ Registration successful! Welcome, ${userCredential.user.email}`);
-      window.location.href = "/pet-shop-project/home.html";
+      window.location.href = "../index.html";
     })
     .catch((error) => {
       alert(`❌ Registration failed: ${error.message}`);
@@ -90,7 +90,7 @@ loginForm.addEventListener('submit', (e) => {
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       alert(`✅ Login successful! Welcome back, ${userCredential.user.email}`);
-      window.location.href ="/pet-shop-project/home.html";
+      window.location.href ="../index.html";
     })
     .catch((error) => {
       alert(`❌ Login failed: ${error.message}`);
@@ -103,7 +103,7 @@ async function handleGoogleSignIn() {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
     alert(`✅ Welcome ${user.displayName}`);
-    window.location.href ="/pet-shop-project/home.html";
+    window.location.href ="../index.html";
   } catch (error) {
     alert(`❌ Error during Google Sign In: ${error.message}`);
   }
