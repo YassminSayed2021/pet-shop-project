@@ -1,0 +1,51 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #d9b27b;
+  margin: 0;
+  padding: 20px;
+  /* background-image:url('nice-to-meet-you.gif'); */
+  background-size: cover;
+  background-position: center;
+}
+
+#app {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h2 {
+  margin-top: 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+ opacity: 1;
+}
+
+
+
+.order-card {
+  border: 1px solid #9d9c9c;
+  padding: 15px;
+  border-radius: 6px;
+  background-color: #fafafa00;
+  /* backdrop-filter: blur (20px); */
+}
+
+
+.order-card p {
+  margin: 5px 0;
+
+}
