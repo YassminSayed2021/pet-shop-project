@@ -54,17 +54,22 @@
 </li>
     </ul>
 
-    <a href="./login-register/index.html" class="navbar-action-btn">Login</a>
+    <a href="./login-register/index.html" class="navbar-action-btn" id="authLink">Login</a>
 
 </nav>
 
 <div class="header-actions">
 
 
-    <button class="action-btn user" aria-label="User">
-        <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+<div class="user-dropdown">
+  <button class="action-btn user" aria-label="User">
+    <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+  </button>
+  <div class="dropdown-content">
+    <a href="./order_history.html">Order History</a>
+  </div>
+</div>
 
-    </button>
 
 
     <button class="action-btn" aria-label="cart">
@@ -623,7 +628,7 @@
     <span class="span">About Us</span>, Who we are
   </h2>
 
-   <section   class="cta has-bg-image" aria-label="cta" >
+   <section   class="cta has-bg-image" aria-label="cta" id="about" >
     <div class="container">
 
       <figure class="cta-banner">
@@ -825,6 +830,7 @@
   
 <script type="module" src="render_products.js"></script>
 <script type="module" src="login-register/firebaseConfig.js"></script>
+<script src="./authLink.js" type="module"></script>
 
 </body>
 </html>
