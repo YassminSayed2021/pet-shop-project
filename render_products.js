@@ -5,11 +5,14 @@ import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.3.0/f
 const productList = document.getElementById('product-list');
 const paginationContainer = document.getElementById('pagination');
 const priceRange = document.querySelectorAll('input[name="price"]');
-
+const cartItems = document.querySelectorAll("cart-items");
 const PRODUCTS_PER_PAGE = 6;
 let currentPage = 1;
 let allProducts = [];
 let filteredProducts = [];
+
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+updateCartBadge();
 
 function renderProducts(page = 1) {
   productList.innerHTML = '';
@@ -28,17 +31,18 @@ function renderProducts(page = 1) {
 
 
 
+
   productsToShow.forEach(product => {
     const li = document.createElement('li');
     li.classList.add('product-item');
-
+  
     li.innerHTML = `
       <div class="product-card">
         <div class="card-banner img-holder">
          <img src="${product.images?.[0] || 'default.jpg'}" alt="${product.title}" class="img-cover default" />
 <img src="${product.images?.[1] || product.images?.[0] || 'default.jpg'}" alt="${product.title}" class="img-cover hover" />
 
-          <button class="card-action-btn" aria-label="add to cart" title="Add To Cart">
+          <button class="card-action-btn" aria-label="add to cart" title="Add To Cart" onclick="addToCart('${product.id}')">
             <ion-icon name="bag-add-outline" aria-hidden="true"></ion-icon>
           </button>
         </div>
@@ -53,6 +57,10 @@ function renderProducts(page = 1) {
         </div>
       </div>
     `;
+
+    const addToCartBtn = li.querySelector('.card-action-btn');
+    addToCartBtn.addEventListener('click', () => addToCart(product));
+    
     productList.appendChild(li);
   });
 
@@ -62,6 +70,7 @@ function renderProducts(page = 1) {
 
   
 }
+
 
 function renderPagination() {
   const source = filteredProducts.length ? filteredProducts : allProducts;
@@ -80,7 +89,39 @@ function renderPagination() {
     paginationContainer.appendChild(btn);
   }
 }
-
+function addToCart(product) {
+  const existingProductIndex = cart.findIndex(item => item.id === product.id);
+  if (existingProductIndex !== -1) {
+    cart[existingProductIndex].quantity += 1;
+  } else {
+    cart.push({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image: product.images?.[0] || './images/product-1.jpg',
+      quantity: 1
+    });
+  }
+    localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartBadge();
+  showAddToCartFeedback();
+}
+function updateCartBadge() {
+  const badge = document.querySelector('.btn-badge');
+  if (badge) {
+    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+    badge.textContent = totalItems;
+  }
+}
+function showAddToCartFeedback() {
+   const feedback = document.createElement('div');
+  feedback.classList.add('add-to-cart-feedback');
+  feedback.textContent = 'Product added to cart!';
+    document.body.appendChild(feedback);
+      setTimeout(() => {
+    feedback.remove();
+  }, 2000);
+}
 async function fetchProducts() {
   try {
     const snapshot = await getDocs(collection(db, 'products'));
@@ -95,7 +136,21 @@ allProducts = snapshot.docs.map(doc => {
     console.error("Error fetching products:", error);
   }
 }
-
+// function generateDummyProducts() {
+//   const dummyProducts = [];
+  
+//   for (let i = 1; i <= 8; i++) {
+//     dummyProducts.push({
+//       id: `dummy-${i}`,
+//       title: `Pet Product ${i}`,
+//       price: Math.floor(Math.random() * 100) + 20,
+//       rating: Math.floor(Math.random() * 5) + 1,
+//       images: [`./images/product-${i % 7 + 1}.jpg`, `./images/product-${i % 7 + 1}_0.jpg`]
+//     });
+//   }
+  
+//   return dummyProducts;
+// }
 priceRange.forEach(radio => {
   radio.addEventListener('change', function () {
     const range = this.value;
@@ -120,10 +175,11 @@ priceRange.forEach(radio => {
   });
 });
 
-
+document.querySelector('.action-btn[aria-label="cart"]').addEventListener('click', () => {
+  window.location.href = './cart/cart.html';
+});
 
 fetchProducts();
 
-
-
+//================================================================================================================================================
 
