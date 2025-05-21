@@ -1,5 +1,5 @@
      body {
-            background-color: hsl(24, 41%, 77%);
+            background-color: hsl(25, 67%, 76%);
             background-size: cover;
             background-position: center;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -42,7 +42,9 @@
         }
 
         input.form-control:focus,
-        textarea.form-control:focus {
+        textarea.form-control:focus,
+        input.form-control:hover,
+        textarea.form-control:hover  {
             border-color: #ff4500;
             box-shadow: 0 0 8px #ff4500aa;
             outline: none;
