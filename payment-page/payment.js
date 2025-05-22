@@ -111,7 +111,7 @@ function createPaymentForm() {
     cardDetailsContainer.className = 'card-details';
 
     // Card Number
-    const cardNumberGroup = createFormGroup('card-number', 'Card Number', 'text', '1234 5678 9012 3456', '16');
+    const cardNumberGroup = createFormGroup('card-number', 'Card Number', 'text', '1234 5678 9012 3456', '19');
     const cardNumberError = createError('card-number-error', 'Please enter a valid card number');
     cardNumberGroup.appendChild(cardNumberError);
     cardDetailsContainer.appendChild(cardNumberGroup);
