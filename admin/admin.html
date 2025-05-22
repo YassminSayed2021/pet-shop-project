@@ -7,6 +7,8 @@
     <link rel="icon" href="default image product.jpg" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="admin.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer type="module" src="admin.js"></script>
 </head>
 <body>
     <div class="container">
@@ -16,7 +18,7 @@
        
         <nav class="navbar navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Pet Shop Admin 🐾</a>
+                <h2>Pet Shop Admin 🐾</h2>
                 <button id="logoutBtn" class="btn btn-outline-danger">Logout</button>
             </div>
         </nav>
@@ -44,9 +46,9 @@
             </li>
         </ul>
 
-        <!-- Tabs Content -->
+        
         <div class="tab-content" id="adminTabContent">
-            <!-- Products Tab -->
+            <!-- Products  -->
             <div class="tab-pane fade show active" id="products" role="tabpanel" aria-labelledby="products-tab">
                 <form id="productForm" class="mb-5">
                     <div class="mb-3">
@@ -85,7 +87,7 @@
                 </table>
             </div>
 
-            <!-- Admins Tab -->
+            <!-- Admins  -->
             <div class="tab-pane fade" id="admins" role="tabpanel" aria-labelledby="admins-tab">
                 <table class="table table-striped">
                     <thead>
@@ -103,8 +105,9 @@
             </div>
         </div>
     </div>
+   <!-- Scroll up -->
+<button id="scrollTopBtn" class="btn rounded-circle text-white shadow" title="up">^</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="admin.js"></script>
+    
 </body>
 </html>
