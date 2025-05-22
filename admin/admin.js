@@ -9,19 +9,59 @@ import {
   setDoc,
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
 
 const cloudinaryUrl = "https://api.cloudinary.com/v1_1/dfcl3kecg/image/upload";
-const uploadPreset = "petshop"; 
+const uploadPreset = "petshop";
 
 const productForm = document.getElementById("productForm");
 const productList = document.getElementById("productList");
+const userList = document.getElementById("userList");
+const logoutBtn = document.getElementById("logoutBtn");
+const totalProducts = document.getElementById("totalProducts");
+const totalAdmins = document.getElementById("totalAdmins");
+const userError = document.getElementById("userError");
+
+console.log("Admin.js: Elements initialized:", {
+  productForm: !!productForm,
+  productList: !!productList,
+  userList: !!userList,
+  logoutBtn: !!logoutBtn,
+  totalProducts: !!totalProducts,
+  totalAdmins: !!totalAdmins,
+  userError: !!userError
+});
+
+const productsCollection = collection(db, "products");
+const usersCollection = collection(db, "users");
+const defaultImage = "/admin/default image product.jpg";
+
+let editProductId = null;
+
+// Logout function
+async function handleLogout() {
+  try {
+    await signOut(auth);
+    console.log("Admin.js: User signed out successfully");
+    alert("✅ Signed out successfully!");
+    window.location.replace("../login-register/index.html");
+  } catch (error) {
+    console.error("Admin.js: Logout Error:", error.message, error.code);
+    alert(`❌ Error during logout: ${error.message}`);
+  }
+}
+
+// Attach logout event listener
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", handleLogout);
+} else {
+  console.error("Admin.js: logoutBtn not found in DOM");
+}
 
 // Check user role and protect admin page
 onAuthStateChanged(auth, async (user) => {
   console.log("Admin.js: Auth state checked, user:", user ? { uid: user.uid, email: user.email } : null);
   
-  // Check if we're on admin.html to avoid unnecessary redirects
   const isAdminPage = window.location.pathname.includes("admin.html");
   if (!isAdminPage) {
     console.log("Admin.js: Not on admin.html, skipping role check");
@@ -41,20 +81,17 @@ onAuthStateChanged(auth, async (user) => {
 
     if (!userDoc.exists()) {
       console.warn(`Admin.js: User document not found for UID: ${user.uid}`);
-      // Set role based on email
-      const isAdminEmail = user.email === "dr.hala.youssef@gmail.com";
       await setDoc(userDocRef, {
         email: user.email,
         provider: "email",
         createdAt: new Date(),
-        role: isAdminEmail ? "admin" : "user"
+        role: "user",
+        userId: user.uid
       }, { merge: true });
-      console.log(`Admin.js: Created user document with role: ${isAdminEmail ? "admin" : "user"}`);
-      if (!isAdminEmail) {
-        console.log("Admin.js: Non-admin document created, redirecting to index.html");
-        window.location.replace("../index.html");
-        return;
-      }
+      console.log(`Admin.js: Created user document with role: user`);
+      console.log("Admin.js: Non-admin document created, redirecting to index.html");
+      window.location.replace("../index.html");
+      return;
     }
 
     const userData = userDoc.data();
@@ -68,12 +105,40 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    console.log("Admin.js: Admin access granted, loading products");
+    console.log("Admin.js: Admin access granted, loading products and users");
     fetchProducts();
+    fetchUsers();
+
+    // Refresh data when switching tabs
+    const productTab = document.getElementById("products-tab");
+    const adminTab = document.getElementById("admins-tab");
+    if (productTab) {
+      productTab.addEventListener("shown.bs.tab", () => {
+        console.log("Admin.js: Products tab shown, refreshing products");
+        fetchProducts();
+      });
+    } else {
+      console.error("Admin.js: products-tab not found in DOM");
+    }
+    if (adminTab) {
+      adminTab.addEventListener("shown.bs.tab", () => {
+        console.log("Admin.js: Admins tab shown, refreshing users");
+        fetchUsers();
+      });
+    } else {
+      console.error("Admin.js: admins-tab not found in DOM");
+    }
   } catch (error) {
     console.error(`Admin.js: Error checking user role: ${error.message} (Code: ${error.code})`);
     if (productList) {
-      productList.innerHTML = "<tr><td colspan='5'>Error loading admin access. Please refresh the page.</td></tr>";
+      productList.innerHTML = `<tr><td colspan='5' class='error-message'>Error loading admin access: ${error.message}. Please refresh the page.</td></tr>`;
+    }
+    if (userList) {
+      userList.innerHTML = `<tr><td colspan='3' class='error-message'>Error loading users: ${error.message}. Please refresh the page.</td></tr>`;
+    }
+    if (userError) {
+      userError.textContent = `Error loading admin access: ${error.message}`;
+      userError.style.display = "block";
     }
     setTimeout(() => {
       console.log("Admin.js: Retrying role check after error");
@@ -82,99 +147,117 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-const productsCollection = collection(db, "products");
-const defaultImage = "/admin/default image product.jpg";
+// Product Management
+if (productForm) {
+  productForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-let editProductId = null;
+    const name = document.getElementById("productName")?.value;
+    const price = document.getElementById("productPrice")?.value;
+    const description = document.getElementById("productDescription")?.value;
+    const imageFile = document.getElementById("productImage")?.files[0];
 
-productForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    console.log("Admin.js: Form Data:", { name, price, description, imageFile });
 
-  const name = document.getElementById("productName").value;
-  const price = document.getElementById("productPrice").value;
-  const description = document.getElementById("productDescription").value;
-  const imageFile = document.getElementById("productImage").files[0];
-
-  console.log("Form Data:", {
-    name,
-    price,
-    description,
-    imageFile,
-  });
-  try {
-    let imageUrl = null;
-
-    if (imageFile) {
-      const formData = new FormData();
-      formData.append("file", imageFile);
-      formData.append("upload_preset", uploadPreset);
-
-      const response = await fetch(cloudinaryUrl, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-      imageUrl = data.secure_url;
+    if (!name || !price) {
+      console.error("Admin.js: Missing required fields in product form");
+      alert("Please fill in product name and price");
+      return;
     }
 
-    if (editProductId) {
-      const productDocRef = doc(db, "products", editProductId);
-      
-      const updatedData = { 
-        title: name, 
-        price: parseFloat(price), 
-        description,
-        rating: 0
-      };
-      if (imageUrl) updatedData.images = [imageUrl];
+    try {
+      let imageUrl = null;
 
-      await updateDoc(productDocRef, updatedData);
-      alert("Product updated successfully!");
-      editProductId = null;
-    } else {
-      if (!imageUrl) {
-        alert("Please select a product image!");
-        return;
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        formData.append("upload_preset", uploadPreset);
+
+        console.log("Admin.js: Uploading image to Cloudinary");
+        const response = await fetch(cloudinaryUrl, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (data.secure_url) {
+          imageUrl = data.secure_url;
+          console.log("Admin.js: Image uploaded successfully:", imageUrl);
+        } else {
+          console.error("Admin.js: Cloudinary upload failed:", data);
+          throw new Error("Failed to upload image");
+        }
       }
 
-      await addDoc(productsCollection, {
-        title: name,
-        price: parseFloat(price),
-        description,
-        images: [imageUrl],
-        rating: 0
-      });
-      alert("Product added successfully!");
+      if (editProductId) {
+        console.log(`Admin.js: Updating product with ID: ${editProductId}`);
+        const productDocRef = doc(db, "products", editProductId);
+        const updatedData = { 
+          title: name, 
+          price: parseFloat(price), 
+          description,
+          rating: 0
+        };
+        if (imageUrl) updatedData.images = [imageUrl];
+
+        await updateDoc(productDocRef, updatedData);
+        alert("Product updated successfully!");
+        editProductId = null;
+      } else {
+        if (!imageUrl) {
+          console.error("Admin.js: No image selected for new product");
+          alert("Please select a product image!");
+          return;
+        }
+
+        console.log("Admin.js: Adding new product");
+        await addDoc(productsCollection, {
+          title: name,
+          price: parseFloat(price),
+          description,
+          images: [imageUrl],
+          rating: 0
+        });
+        alert("Product added successfully!");
+      }
+
+      productForm.reset();
+      fetchProducts();
+    } catch (error) {
+      console.error("Admin.js: Error saving product:", error.message, error.code);
+      alert(`An error occurred while saving the product: ${error.message}`);
     }
+  });
+} else {
+  console.error("Admin.js: productForm not found in DOM");
+}
 
-    productForm.reset();
-    fetchProducts();
-
-  } catch (error) {
-    console.error("Error saving product:", error);
-    alert("An error occurred while saving the product.");
-  }
-});
-
+// Fetch Products
 const fetchProducts = async () => {
-  console.log("Fetching products for admin");
+  console.log("Admin.js: Fetching products for admin");
   if (!productList) {
     console.error("Admin.js: productList element not found in DOM");
     alert("Error: Product list element not found. Please check admin.html.");
     return;
   }
 
-  productList.innerHTML = "";
+  productList.innerHTML = "<tr><td colspan='5' class='loading-message'>Loading products...</td></tr>";
   try {
     const querySnapshot = await getDocs(productsCollection);
     console.log("Admin.js: Retrieved products count:", querySnapshot.size);
+    if (totalProducts) {
+      totalProducts.textContent = querySnapshot.size;
+    } else {
+      console.error("Admin.js: totalProducts element not found in DOM");
+    }
+
     if (querySnapshot.empty) {
       console.log("Admin.js: No products found in Firestore");
       productList.innerHTML = "<tr><td colspan='5'>No products available.</td></tr>";
       return;
     }
 
+    productList.innerHTML = "";
     querySnapshot.forEach((docSnap) => {
       const product = docSnap.data();
       const id = docSnap.id;
@@ -233,6 +316,12 @@ const fetchProducts = async () => {
         const modalCancelBtn = document.getElementById("modalCancelBtn");
         const modalSaveBtn = document.getElementById("modalSaveBtn");
 
+        if (!modalOverlay || !modalProductName || !modalProductPrice || !modalProductDescription || !modalCancelBtn || !modalSaveBtn) {
+          console.error("Admin.js: Modal elements not found");
+          alert("Error: Failed to initialize edit modal");
+          return;
+        }
+
         modalCancelBtn.addEventListener("click", () => {
           modalOverlay.remove();
         });
@@ -243,11 +332,13 @@ const fetchProducts = async () => {
           const updatedDescription = modalProductDescription.value;
 
           if (!updatedName || !updatedPrice) {
+            console.error("Admin.js: Missing required fields in edit modal");
             alert("Please fill in product name and price");
             return;
           }
 
           try {
+            console.log(`Admin.js: Updating product with ID: ${editProductId}`);
             const productDocRef = doc(db, "products", editProductId);
             await updateDoc(productDocRef, {
               title: updatedName,
@@ -260,8 +351,8 @@ const fetchProducts = async () => {
             fetchProducts();
             editProductId = null;
           } catch (error) {
-            console.error("Error updating product:", error);
-            alert("An error occurred while updating the product.");
+            console.error("Admin.js: Error updating product:", error.message, error.code);
+            alert(`An error occurred while updating the product: ${error.message}`);
           }
         });
       });
@@ -271,12 +362,13 @@ const fetchProducts = async () => {
         if (!confirmed) return;
 
         try {
+          console.log(`Admin.js: Deleting product with ID: ${id}`);
           await deleteDoc(doc(db, "products", id));
           alert("Product deleted successfully!");
           fetchProducts();
         } catch (error) {
-          console.error("Error deleting product:", error);
-          alert("An error occurred while deleting the product.");
+          console.error("Admin.js: Error deleting product:", error.message, error.code);
+          alert(`An error occurred while deleting the product: ${error.message}`);
         }
       });
 
@@ -284,8 +376,112 @@ const fetchProducts = async () => {
     });
   } catch (error) {
     console.error("Admin.js: Error fetching products:", error.message, error.code);
-    productList.innerHTML = "<tr><td colspan='5'>Error loading products.</td></tr>";
+    productList.innerHTML = `<tr><td colspan='5' class='error-message'>Error loading products: ${error.message}</td></tr>`;
   }
 };
 
-console.log("Admin.js Loaded!");
+// Fetch Users
+const fetchUsers = async () => {
+  console.log("Admin.js: Fetching users for admin");
+  if (!userList) {
+    console.error("Admin.js: userList element not found in DOM");
+    alert("Error: User list element not found. Please check admin.html.");
+    if (userError) {
+      userError.textContent = "Error: User list element not found in DOM.";
+      userError.style.display = "block";
+    }
+    return;
+  }
+
+  userList.innerHTML = "<tr><td colspan='3' class='loading-message'>Loading users...</td></tr>";
+  if (userError) {
+    userError.textContent = "";
+    userError.style.display = "none";
+  }
+
+  try {
+    console.log("Admin.js: Querying users collection");
+    const querySnapshot = await getDocs(usersCollection);
+    console.log("Admin.js: Retrieved users count:", querySnapshot.size);
+    let adminCount = 0;
+    const users = [];
+
+    querySnapshot.forEach((docSnap) => {
+      const user = docSnap.data();
+      const id = docSnap.id;
+      users.push({ id, ...user });
+      if (user.role && user.role.trim().toLowerCase() === "admin") {
+        adminCount++;
+      }
+    });
+
+    if (totalAdmins) {
+      totalAdmins.textContent = adminCount;
+    } else {
+      console.error("Admin.js: totalAdmins element not found in DOM");
+    }
+
+    if (querySnapshot.empty) {
+      console.log("Admin.js: No users found in Firestore");
+      userList.innerHTML = "<tr><td colspan='3'>No users available.</td></tr>";
+      if (userError) {
+        userError.textContent = "No users found in the database.";
+        userError.style.display = "block";
+      }
+      return;
+    }
+
+    console.log("Admin.js: Rendering users, count:", users.length);
+    userList.innerHTML = "";
+    users.forEach((user) => {
+      const userEmail = user.email || "No Email";
+      const userRole = user.role || "user";
+      const isAdmin = userRole.trim().toLowerCase() === "admin";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${userEmail}</td>
+        <td>${userRole}</td>
+        <td>
+          <button class="btn btn-sm ${isAdmin ? 'btn-danger' : 'btn-success'} role-btn">
+            ${isAdmin ? 'Remove Admin' : 'Make Admin'}
+          </button>
+        </td>
+      `;
+
+      tr.querySelector(".role-btn").addEventListener("click", async () => {
+        const action = isAdmin ? "remove admin role from" : "make admin";
+        const confirmed = confirm(`Are you sure you want to ${action} "${userEmail}"?`);
+        if (!confirmed) return;
+
+        try {
+          console.log(`Admin.js: Updating role for user: ${userEmail}`);
+          const userDocRef = doc(db, "users", user.id);
+          await updateDoc(userDocRef, {
+            role: isAdmin ? "user" : "admin"
+          });
+          alert(`✅ User "${userEmail}" ${isAdmin ? "is no longer an admin" : "is now an admin"}!`);
+          fetchUsers();
+        } catch (error) {
+          console.error(`Admin.js: Error updating user role:`, error.message, error.code);
+          alert(`An error occurred while updating the user role: ${error.message}`);
+          if (userError) {
+            userError.textContent = `Error updating user role: ${error.message}`;
+            userError.style.display = "block";
+          }
+        }
+      });
+
+      userList.appendChild(tr);
+    });
+  } catch (error) {
+    console.error("Admin.js: Error fetching users:", error.message, error.code);
+    userList.innerHTML = `<tr><td colspan='3' class='error-message'>Error loading users: ${error.message}</td></tr>`;
+    if (userError) {
+      userError.textContent = `Error loading users: ${error.message}`;
+      userError.style.display = "block";
+    }
+  }
+};
+
+console.log("Admin.js: Script loaded successfully!");
