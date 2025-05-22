@@ -111,13 +111,13 @@ function createPaymentForm() {
     cardDetailsContainer.className = 'card-details';
 
     // Card Number
-    const cardNumberGroup = createFormGroup('card-number', 'Card Number', 'text', '1234 5678 9012 3456', '19');
+    const cardNumberGroup = createFormGroup('card-number', 'Card Number', 'text', '1234 5678 9012 3456', '16');
     const cardNumberError = createError('card-number-error', 'Please enter a valid card number');
     cardNumberGroup.appendChild(cardNumberError);
     cardDetailsContainer.appendChild(cardNumberGroup);
 
     // Card Holder
-    const cardHolderGroup = createFormGroup('card-holder', 'Card Holder Name', 'text', 'John Doe');
+    const cardHolderGroup = createFormGroup('card-holder', 'Card Holder Name', 'text', 'ex: Ahmed xxxx');
     const cardHolderError = createError('card-holder-error', "Please enter the cardholder's name");
     cardHolderGroup.appendChild(cardHolderError);
     cardDetailsContainer.appendChild(cardHolderGroup);
