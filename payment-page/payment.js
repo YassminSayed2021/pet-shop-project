@@ -78,7 +78,7 @@ function createPaymentMethodSelection() {
 function getAmountFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const amount = urlParams.get('amount');
-    return amount ? parseFloat(amount) : 100; // Default to $100 if no amount provided just in test mode, it will be removed...
+    return amount ? parseFloat(amount) : 0.00; // Default to $100 if no amount provided just in test mode, it will be removed...
 }
 
 // Create payment form 

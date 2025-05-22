@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="cart.css" >
+</head>
+<body>
+  <header class="cart-header">
+  <h1> Your Cart 🛒</h1>
+</header>
+
+
+  <a href="../index.html" class="close-btn" title="Back to Home">✖</a>
+
+
+<br>
+  <main class="cart">
+    <div class="cart-section">
+      <table id="carttable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="cart-items"></tbody>
+      </table>
+
+      <div class="subtotal-checkout">
+        <p class="subtotal-text">Subtotal: EGP <span id="subtotal"> 0.00 </span></p>
+        <button class="go-checkout" onclick="goToPay()">Check out</button>
+      </div>
+    </div>
+
+    <div id="empty-cart" class="empty-cart hidden">
+      <img src="img/basket.jpg" alt="Empty basket" />
+      <p>Your basket is empty</p>
+      <button onclick="goToShop()">Go Shopping</button>
+    </div>
+    <!-- <a href="index.html" class="exit-btn" title="Back to Home">
+  <img src="img/exit-icon.jpg" alt="Exit" />
+</a> -->
+
+  </main>
+<div class="cute-dogs">
+  <img src="img/background.png" alt="Pet Logo" />
+</div>
+
+  <script src="cart.js"></script>
+
+</body>
+</html>
