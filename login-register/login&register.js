@@ -13,12 +13,12 @@ const loginBtn = document.getElementById('loginBtn');
 const registerBtn = document.getElementById('registerBtn');
 const loadingDiv = document.getElementById('loading');
 
-// Initialize loading state
+//  loading state
 if (loadingDiv) {
   loadingDiv.style.display = 'flex';
 }
 
-// Function to get redirect URL based on user role
+// redirect /user role
 async function getRedirectUrl(user) {
   try {
     console.log(`Fetching role for user: ${user.uid} (${user.email})`);
@@ -27,7 +27,7 @@ async function getRedirectUrl(user) {
     
     if (!userDoc.exists()) {
       console.warn(`User document not found for UID: ${user.uid}`);
-      return "../index.html"; // Default to user redirect
+      return "../index.html";
     }
 
     const userData = userDoc.data();
@@ -39,7 +39,7 @@ async function getRedirectUrl(user) {
     return redirectUrl;
   } catch (error) {
     console.error(`Error fetching user role: ${error.message} (Code: ${error.code})`);
-    return "../index.html"; // Default to user redirect on error
+    return "../index.html"; 
   }
 }
 
@@ -60,7 +60,7 @@ function showRegister() {
 loginBtn.addEventListener('click', showLogin);
 registerBtn.addEventListener('click', showRegister);
 
-// Validation functions
+// validation
 function isValidEmail(email) {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailPattern.test(email);
@@ -71,7 +71,7 @@ function isValidPassword(password) {
   return passwordPattern.test(password);
 }
 
-// Register
+/// register
 registerForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   
@@ -87,15 +87,14 @@ registerForm.addEventListener('submit', async (e) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    // Set role based on email
-    const isAdminEmail = email === "dr.hala.youssef@gmail.com";
     await setDoc(doc(db, "users", user.uid), {
       email: user.email,
       provider: "email",
       createdAt: new Date(),
-      role: isAdminEmail ? "admin" : "user"
+      role: "user", 
+      userId: user.uid
     });
-    console.log(`Created user document for ${user.email} with role: ${isAdminEmail ? "admin" : "user"}`);
+    console.log(`Created user document for ${user.email} with role: user`);
     alert(`✅ Registration successful! Welcome, ${user.email}`);
     registerForm.reset();
     const redirectUrl = await getRedirectUrl(user);
@@ -107,7 +106,7 @@ registerForm.addEventListener('submit', async (e) => {
   }
 });
 
-// Login
+// login
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('email').value.trim();
@@ -156,8 +155,7 @@ loginForm.addEventListener('submit', async (e) => {
     }
   }
 });
-
-// Google Sign-In
+// google sign in
 async function handleGoogleSignIn(isRegister) {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -171,16 +169,15 @@ async function handleGoogleSignIn(isRegister) {
         await auth.signOut();
         return;
       }
-      // Set role based on email
-      const isAdminEmail = user.email === "dr.hala.youssef@gmail.com";
       await setDoc(userRef, {
         email: user.email,
         name: user.displayName || "User",
         provider: "google",
         createdAt: new Date(),
-        role: isAdminEmail ? "admin" : "user"
+        role: "user", 
+        userId: user.uid
       });
-      console.log(`Created user document for ${user.email} with role: ${isAdminEmail ? "admin" : "user"}`);
+      console.log(`Created user document for ${user.email} with role: user`);
       alert(`✅ Registration successful! Welcome, ${user.displayName || "User"}`);
       const redirectUrl = await getRedirectUrl(user);
       console.log(`Navigating to: ${redirectUrl}`);
@@ -212,21 +209,34 @@ async function handleGoogleSignIn(isRegister) {
 document.getElementById('googleLoginBtn').addEventListener('click', () => handleGoogleSignIn(false));
 document.getElementById('googleRegisterBtn').addEventListener('click', () => handleGoogleSignIn(true));
 
-// Handle authenticated users and loading state
+
+// handle authenticated users and loading state
 onAuthStateChanged(auth, async (user) => {
   console.log("Auth state checked, user:", user ? { uid: user.uid, email: user.email } : null);
   if (user) {
     const isLoginOrRegisterPage = window.location.pathname.includes("login.html") || window.location.pathname.includes("register.html");
     if (isLoginOrRegisterPage) {
-      const redirectUrl = await getRedirectUrl(user);
-      console.log(`Navigating to: ${redirectUrl}`);
-      window.location.replace(redirectUrl);
+      try {
+        const redirectUrl = await getRedirectUrl(user);
+        console.log(`Navigating to: ${redirectUrl}`);
+        window.location.replace(redirectUrl);
+      } catch (error) {
+        console.error(`Error determining redirect URL: ${error.message} (Code: ${error.code})`);
+        window.location.replace("../index.html"); 
+      }
     }
   } else {
-    // Show page content for unauthenticated users
+    // show page content for unauthenticated users
     if (loadingDiv) {
       loadingDiv.style.display = 'none';
     }
     document.body.style.visibility = 'visible';
+    // ensure only one form is visible 
+    if (loginForm && registerForm) {
+      loginForm.classList.remove('hidden');
+      registerForm.classList.add('hidden'); 
+      loginBtn.classList.add('active');
+      registerBtn.classList.remove('active');
+    }
   }
 });

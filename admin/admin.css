@@ -1,5 +1,5 @@
      body {
-            background-color: hsl(25, 67%, 76%);
+            background-color: hsl(25, 85%, 85%);
             background-size: cover;
             background-position: center;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -87,6 +87,18 @@
             object-fit: cover;
             border-radius: 8px;
             border: 2px solid #ff7f50;
+        }
+        #scrollTopBtn{
+        background-color: #e65c00; 
+          position: fixed; 
+          bottom: 30px; 
+          right: 30px; 
+          display: none;
+          width: 45px;
+          height: 45px;
+          font-size: 20px;
+          line-height: 1;
+          padding: 0;
         }
 
         @media (max-width: 768px) {
