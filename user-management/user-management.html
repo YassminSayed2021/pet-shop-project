@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="user-management.css">
+    
+    
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>My Profile</h1>
+
+        
+        <div class="form-container">
+            <h2>Account Information</h2>
+            <div id="userInfo" class="loading">
+                Loading user information...
+            </div>
+        </div>
+
+        
+        <div class="form-container">
+            <h2>Update Email</h2>
+            <form id="updateEmailForm">
+                <div class="form-group">
+                    <label for="currentEmail">Current Email</label>
+                    <input type="email" id="currentEmail" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="newEmail">New Email</label>
+                    <input type="email" id="newEmail" required>
+                </div>
+                <button type="submit" class="btn-primary">Update Email</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <h2>Update Password</h2>
+            <form id="updatePasswordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn-success">Update Password</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <a href="../index.html" class="btn-primary" style="text-decoration: none; display: inline-block;">Back to Home</a>
+        </div>
+    </div>
+
+    <script src="user-management.js"></script>
+</body>
+</html> 
