@@ -6,7 +6,7 @@ body {
     height: 100vh;
     margin: 0;
     background-image: url('footprints.gif');
-    background-color: #de7710; /* #f3f2eb - #de4d10 - #de1010*/
+    background-color: #de7710; 
 }
 .payment-container {
     background: #f3f2eb;
