@@ -1,0 +1,81 @@
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  background: linear-gradient(135deg, #e86107 0%, #babcc1 100%);
+  color: rgb(18, 17, 17);
+}
+
+.bg-white {
+  background: rgba(189, 178, 170, 0.782);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  backdrop-filter: blur(5px);
+}
+
+h1 {
+  text-align: center;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: rgb(15, 1, 1);
+}
+
+.mb-4 {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: rgb(11, 0, 0);
+  margin-bottom: 5px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+select option {
+  background: #e18413;
+  color: white;
+}
+
+.table-container {
+  text-align: left;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: left;
+  color: rgb(9, 0, 0);
+}
+
+th {
+  background: rgba(255, 255, 255, 0.05);
+  font-weight: bold;
+}
+
+td[colspan="4"] {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+}
