@@ -20,6 +20,9 @@ const defaultImage = "/admin/default image product.jpg";
 
 let editProductId = null;
 
+
+
+
 // logout 
 async function handleLogout() {
   try {
@@ -32,7 +35,7 @@ async function handleLogout() {
   }
 }
 
-//  logout event listener
+//  logout
 if (logoutBtn) {
   logoutBtn.addEventListener("click", handleLogout);
 } else {
@@ -78,6 +81,10 @@ onAuthStateChanged(auth, async (user) => {
     fetchProducts();
     fetchUsers();
 
+
+
+
+
     // refresh data when switching tabs
     const productTab = document.getElementById("products-tab");
     const adminTab = document.getElementById("admins-tab");
@@ -108,6 +115,10 @@ onAuthStateChanged(auth, async (user) => {
     }, 3000);
   }
 });
+
+
+
+
 
 // product management
 if (productForm) {
@@ -187,6 +198,11 @@ if (productForm) {
 } else {
   console.error("Admin.js: productForm not found in DOM");
 }
+
+
+
+
+
 
 // fetch products
 const fetchProducts = async () => {
@@ -329,6 +345,7 @@ const fetchProducts = async () => {
     productList.innerHTML = `<tr><td colspan='5' class='error-message'>Error loading products: ${error.message}</td></tr>`;
   }
 };
+
 
 // fetch users
 const fetchUsers = async () => {
