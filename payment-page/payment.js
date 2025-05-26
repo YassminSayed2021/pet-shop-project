@@ -11,6 +11,7 @@ async function stripe(price) {
             body: JSON.stringify({
                 amount: price,
                 name: 'Pets Shop',
+            
                 onSuccess: "https://127.0.0.1:5501/payment-page/payment-page.html",
                 onCancel: "https://127.0.0.1:5501/payment-page/payment-page.html",
             })
