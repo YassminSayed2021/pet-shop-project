@@ -35,16 +35,19 @@ function displayProductDetails(product) {
 
 
 
+let currentProduct = null;
 
 
 
 async function fetchProductDetails(productId) {
+  
   try {
     const productRef = doc(db, "products", productId);
     const docSnap = await getDoc(productRef);
 
     if (docSnap.exists()) {
       const product = docSnap.data();
+      currentProduct = product;
       displayProductDetails(product);
     } else {
       alert("Product not found");
@@ -53,6 +56,28 @@ async function fetchProductDetails(productId) {
     console.error("Error getting product details:", error);
   }
 }
+
+
+document.getElementById("buyNowBtn").addEventListener("click", () => {
+  if (!currentProduct) {
+    alert("Product not loaded yet.");
+    return;
+  }
+
+  const quantityInput = document.querySelector('input[name="quantity"]');
+  const quantity = parseInt(quantityInput.value) || 1;
+
+  const subtotal = currentProduct.price * quantity;
+  const finalAmount = subtotal.toFixed(2);
+
+  localStorage.setItem('finalAmount', finalAmount);
+  localStorage.setItem('productName', currentProduct.name ?? "Product");
+  localStorage.setItem('productImage', currentProduct.images?.[0] ?? './img/default.jpg');
+
+  window.location.href = "../payment-page/payment-page.html";
+});
+
+
 
 const productId = getProductIdFromUrl();
 if (productId) {
@@ -64,37 +89,7 @@ if (productId) {
 
 
 
-// const productImg = document.getElementById('productImg');
-// const leftArrow = document.querySelector('.left-arrow');
-// const rightArrow = document.querySelector('.right-arrow');
-
-// const images = [
-//     'img/product-1.jpg',
-//     'img/product-1_0.jpg',
-
-// ];
 
 
 
-// let currentIndex = 0;
 
-// function updateImage(index) {
-//     productImg.classList.add('fade-out');
-//     setTimeout(() => {
-//         productImg.src = images[index];
-//         productImg.classList.remove('fade-out');
-//         productImg.classList.add('fade-in');
-//         setTimeout(() => productImg.classList.remove('fade-in'), 300);
-//     }, 200);
-// }
-
-
-// leftArrow.addEventListener('click', () => {
-//     currentIndex = (currentIndex - 1 + images.length) % images.length;
-//     updateImage(currentIndex);
-// });
-
-// rightArrow.addEventListener('click', () => {
-//     currentIndex = (currentIndex + 1) % images.length;
-//     updateImage(currentIndex);
-// });

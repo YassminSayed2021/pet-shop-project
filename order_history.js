@@ -3,7 +3,8 @@ import {
   collection,
   getDocs,
   query,
-  where
+  where,
+  
 } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
 import {
   onAuthStateChanged
@@ -16,8 +17,11 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     const q = query(
       collection(db, "orders"),
-      where("userId", "==", user.uid)
+      where("userId", "==", user.uid),
     );
+
+
+
 
     try {
       const snapshot = await getDocs(q);
@@ -28,17 +32,15 @@ onAuthStateChanged(auth, async (user) => {
         `;
         return;
       }
-
+let index = 0;
       snapshot.forEach((doc) => {
 
         const order = doc.data();
         const row = document.createElement('tr');
-let index =0;
+
         row.innerHTML = `
-          <td>#${index+1}</td>
+          <td>#${++index}</td>
           <td>${order.productTitle || 'N/A'}</td>
-          <td>${order.paymentMethod || 'N/A'}</td>
-          <td><span class="status-${order.status?.toLowerCase()}">${order.status}</span></td>
           <td>$${order.total || 0}</td>
         `;
 
@@ -52,3 +54,6 @@ let index =0;
     window.location.href = "login.html"; 
   }
 });
+
+
+
