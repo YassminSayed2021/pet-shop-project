@@ -10,7 +10,7 @@ body {
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
-  background: url('/pet-shop-project/payment-page/0ba39f8ac96987377a9b2d6a6deee3c6.jpg') no-repeat center / contain;
+  background: url('./0ba39f8ac96987377a9b2d6a6deee3c6.jpg') no-repeat center / contain;
   background-blend-mode: overlay;
   padding: 4rem 1rem;
 }
