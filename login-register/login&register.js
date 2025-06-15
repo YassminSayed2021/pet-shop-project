@@ -11,12 +11,6 @@ const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
 const loginBtn = document.getElementById('loginBtn');
 const registerBtn = document.getElementById('registerBtn');
-const loadingDiv = document.getElementById('loading');
-
-//  loading state
-if (loadingDiv) {
-  loadingDiv.style.display = 'flex';
-}
 
 // redirect /user role
 async function getRedirectUrl(user) {
@@ -43,6 +37,7 @@ async function getRedirectUrl(user) {
   }
 }
 
+// switch between login and register forms
 function showLogin() {
   loginForm.classList.remove('hidden');
   registerForm.classList.add('hidden');
@@ -71,7 +66,7 @@ function isValidPassword(password) {
   return passwordPattern.test(password);
 }
 
-/// register
+/// register /add new account 
 registerForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   
@@ -80,7 +75,7 @@ registerForm.addEventListener('submit', async (e) => {
   const confirmPassword = document.getElementById('confirm-password').value.trim();
 
   if (password !== confirmPassword) {
-    alert('❌ Passwords do not match.');
+    alert('Passwords do not match.');
     return;
   }
 
@@ -95,14 +90,14 @@ registerForm.addEventListener('submit', async (e) => {
       userId: user.uid
     });
     console.log(`Created user document for ${user.email} with role: user`);
-    alert(`✅ Registration successful! Welcome, ${user.email}`);
+    alert(`Registration successful! Welcome, ${user.email}`);
     registerForm.reset();
     const redirectUrl = await getRedirectUrl(user);
     console.log(`Navigating to: ${redirectUrl}`);
     window.location.replace(redirectUrl);
   } catch (error) {
-    console.error("❌ Registration Error:", error.message, error.code);
-    alert(`❌ Registration failed: ${error.message}`);
+    console.error("Registration Error:", error.message, error.code);
+    alert(`Registration failed: ${error.message}`);
   }
 });
 
@@ -113,12 +108,12 @@ loginForm.addEventListener('submit', async (e) => {
   const password = document.getElementById('password').value.trim();
 
   if (!isValidEmail(email)) {
-    alert('❌ Invalid email format. Please enter a valid email.');
+    alert('Invalid email format. Please enter a valid email.');
     return;
   }
 
   if (password.length === 0) {
-    alert('❌ Password cannot be empty.');
+    alert('Password cannot be empty.');
     return;
   }
 
@@ -126,31 +121,32 @@ loginForm.addEventListener('submit', async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     console.log(`Logged in user: ${user.email}`);
-    alert(`✅ Login successful! Welcome back, ${user.email}`);
+    alert(`Login successful! Welcome back, ${user.email}`);
     loginForm.reset();
+
     const redirectUrl = await getRedirectUrl(user);
     console.log(`Navigating to: ${redirectUrl}`);
     window.location.replace(redirectUrl);
   } catch (error) {
-    console.error("❌ Login Error:", error.message, error.code);
+    console.error("Login Error:", error.message, error.code);
     switch (error.code) {
       case 'auth/user-not-found':
-        alert('❌ No user found with this email. Please register first.');
+        alert('No user found with this email. Please register first.');
         break;
       case 'auth/wrong-password':
-        alert('❌ Incorrect password. Please try again.');
+        alert('Incorrect password. Please try again.');
         break;
       case 'auth/invalid-email':
-        alert('❌ Invalid email format.');
+        alert('Invalid email format.');
         break;
       case 'auth/too-many-requests':
-        alert('❌ Too many failed attempts. Please try again later.');
+        alert('Too many failed attempts. Please try again later.');
         break;
       case 'auth/invalid-login-credentials':
-        alert('❌ Invalid login credentials. Please check your email and password.');
+        alert('Invalid login credentials. Please check your email and password.');
         break;
       default:
-        alert(`❌ Login failed: ${error.message}`);
+        alert(`Login failed: ${error.message}`);
         break;
     }
   }
@@ -165,7 +161,7 @@ async function handleGoogleSignIn(isRegister) {
 
     if (isRegister) {
       if (docSnap.exists()) {
-        alert("❌ This email is already registered. Please log in instead.");
+        alert("This email is already registered. Please log in instead.");
         await auth.signOut();
         return;
       }
@@ -178,31 +174,31 @@ async function handleGoogleSignIn(isRegister) {
         userId: user.uid
       });
       console.log(`Created user document for ${user.email} with role: user`);
-      alert(`✅ Registration successful! Welcome, ${user.displayName || "User"}`);
+      alert(`Registration successful! Welcome, ${user.displayName || "User"}`);
       const redirectUrl = await getRedirectUrl(user);
       console.log(`Navigating to: ${redirectUrl}`);
       window.location.replace(redirectUrl);
     } else {
       if (!docSnap.exists()) {
-        alert("❌ No account found. Please register first.");
+        alert("No account found. Please register first.");
         await auth.signOut();
         return;
       }
       const userData = docSnap.data();
       if (userData.provider !== "google") {
-        alert("❌ This account was not registered with Google. Use email/password login.");
+        alert("This account was not registered with Google. Use email/password login.");
         await auth.signOut();
         return;
       }
       console.log(`Logged in user: ${user.email}`);
-      alert(`✅ Welcome back, ${user.displayName || "User"}`);
+      alert(`Welcome back, ${user.displayName || "User"}`);
       const redirectUrl = await getRedirectUrl(user);
       console.log(`Navigating to: ${redirectUrl}`);
       window.location.replace(redirectUrl);
     }
   } catch (error) {
-    console.error("❌ Google Sign-In Error:", error.message, error.code);
-    alert(`❌ Error during Google Sign-In: ${error.message}`);
+    console.error("Google Sign-In Error:", error.message, error.code);
+    alert(`Error during Google Sign-In: ${error.message}`);
   }
 }
 
@@ -210,7 +206,7 @@ document.getElementById('googleLoginBtn').addEventListener('click', () => handle
 document.getElementById('googleRegisterBtn').addEventListener('click', () => handleGoogleSignIn(true));
 
 
-// handle authenticated users and loading state
+// handle authenticated users
 onAuthStateChanged(auth, async (user) => {
   console.log("Auth state checked, user:", user ? { uid: user.uid, email: user.email } : null);
   if (user) {
@@ -226,17 +222,6 @@ onAuthStateChanged(auth, async (user) => {
       }
     }
   } else {
-    // show page content for unauthenticated users
-    if (loadingDiv) {
-      loadingDiv.style.display = 'none';
-    }
     document.body.style.visibility = 'visible';
-    // ensure only one form is visible 
-    if (loginForm && registerForm) {
-      loginForm.classList.remove('hidden');
-      registerForm.classList.add('hidden'); 
-      loginBtn.classList.add('active');
-      registerBtn.classList.remove('active');
-    }
-  }
+  showLogin(); }
 });
