@@ -1,77 +1,234 @@
+// Initialize Stripe (using test publishable key)
+const stripe = Stripe('pk_test_51RR8inRQgleRY2lfafdo5rfvbp3K3PfxedT3cculD7bbDD9EnpqMrYlzLTNW3De7t02sh1g84vipDJtFLkTx3LMf00xkZNcecU');
+const elements = stripe.elements();
 
+// Retrieve finalAmount from localStorage
+const finalAmount = parseFloat(localStorage.getItem('finalAmount')) || 0.00;
 
+// Update amount display and button text
+document.getElementById('amount-display').textContent = `Amount: $${finalAmount.toFixed(2)}`;
+document.getElementById('button-text').textContent = `Pay $${finalAmount.toFixed(2)}`;
 
+// Create card element
+const cardElement = elements.create('card', {
+    style: {
+        base: {
+            fontSize: '16px',
+            color: '#424770',
+            fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+            '::placeholder': {
+                color: '#aab7c4',
+            },
+        },
+        invalid: {
+            color: '#dc3545',
+        },
+    },
+});
 
+// Mount card element
+cardElement.mount('#card-element');
 
-
-async function stripe(price) {
-        const response = await fetch('https://adel.dev/scripts/stripe.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                amount: price,
-                name: 'Pets Shop',
-            
-                onSuccess: "https://127.0.0.1:5501/payment-page/payment-page.html",
-                onCancel: "https://127.0.0.1:5501/payment-page/payment-page.html",
-            })
-        });
-
-        const data = await response.json();
-        if (data.url) {
-            window.location.href = data.url;
-        } else {
-            alert("Error: " + data.error);
-        }
-    }
-
-
-
-// Helper to create form group
-function createPaymentForm() {
-    const container = document.createElement('div');
-    container.className = 'payment-container';
-
-    // Title
-    const title = document.createElement('h2');
-    title.textContent = 'Payment Details';
-    container.appendChild(title);
-
-    const form = document.createElement('form');
-    form.id = 'payment-form';
-
-    // Get amount from localStorage
-    const amountValueRaw = localStorage.getItem('finalAmount');
-    if (amountValueRaw) {
-        const amountDisplay = document.createElement('h3');
-        const amountValue = parseFloat(amountValueRaw);
-        amountDisplay.textContent = `Amount: $${amountValue.toFixed(2)}`;
-        form.appendChild(amountDisplay);
-
-        // Submit Button
-        const button = document.createElement('button');
-        button.type = 'submit';
-        button.textContent = 'Pay Now';
-        form.appendChild(button);
-
-        // Submit handler
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Convert dollars to cents for Stripe (e.g. 50.00 -> 5000)
-            const priceInCents = Math.round(amountValue * 1);
-            stripe(priceInCents);
-        });
+// Handle real-time validation errors from the card Element
+cardElement.on('change', ({error}) => {
+    const displayError = document.getElementById('card-errors');
+    if (error) {
+        displayError.textContent = error.message;
     } else {
-        const amountError = document.createElement('div');
-        amountError.textContent = "There is no amount";
-        form.appendChild(amountError);
+        displayError.textContent = '';
+    }
+});
+
+// Handle form submission
+const form = document.getElementById('payment-form');
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    
+    // Validate email
+    if (!email || !isValidEmail(email)) {
+        showNotification('Please enter a valid email address.', 'error');
+        return;
     }
 
-    container.appendChild(form);
-    document.getElementById('app').appendChild(container);
+    // Validate amount
+    if (finalAmount <= 0) {
+        showNotification('Invalid amount. Please check your cart.', 'error');
+        return;
+    }
+
+    setLoading(true);
+
+    try {
+        // Create payment method
+        const {error, paymentMethod} = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement,
+            billing_details: {
+                email: email,
+            },
+        });
+
+        if (error) {
+            showNotification(error.message, 'error');
+            setLoading(false);
+        } else {
+            // Simulate payment processing
+            await simulatePayment(paymentMethod);
+        }
+    } catch (err) {
+        console.error('Payment error:', err);
+        showNotification('An unexpected error occurred. Please try again.', 'error');
+        setLoading(false);
+    }
+});
+
+// Simulate complete payment processing with detailed steps
+async function simulatePayment(paymentMethod) {
+    const amount = finalAmount; // Use finalAmount from localStorage
+    const cardBrand = paymentMethod.card.brand.toUpperCase();
+    const last4 = paymentMethod.card.last4;
+    const email = document.getElementById('email').value;
+
+    try {
+        // Step 1: Validating payment method
+        showNotification('🔍 Validating payment method...', 'success');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Step 2: Processing payment
+        showNotification('⚡ Processing payment...', 'success');
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Step 3: Confirming transaction
+        showNotification('✅ Confirming transaction...', 'success');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Check for specific test card behaviors
+        if (last4 === '0002') {
+            // Declined card
+            showNotification('❌ Payment Declined: Your card was declined by the issuing bank. Please try a different payment method.', 'error');
+            setLoading(false);
+            return;
+        } else if (last4 === '9995') {
+            // Insufficient funds
+            showNotification('💳 Payment Failed: Insufficient funds available on your card. Please try a different card.', 'error');
+            setLoading(false);
+            return;
+        }
+
+        // Success for all other cards (including 4242 and any other test cards)
+        // Generate transaction ID
+        const transactionId = 'txn_' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        
+        // Final success notification with complete details
+        const successMessage = `
+            🎉 Payment Successful! 
+            Amount: $${amount.toFixed(2)}
+            Card: ${cardBrand} ****${last4}
+            Email: ${email}
+            Transaction ID: ${transactionId}
+            ✅ Receipt sent to your email
+        `;
+        
+        showNotification(successMessage, 'success');
+
+        // Show additional confirmation
+        setTimeout(() => {
+            showNotification('📧 Confirmation email has been sent to ' + email, 'success');
+        }, 2000);
+
+        // Redirect to index.html after successful payment
+        setTimeout(() => {
+            showNotification('🔄 Redirecting to home page...', 'success');
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 1500);
+        }, 4000);
+
+        resetForm();
+
+    } catch (error) {
+        showNotification('❌ Payment Error: ' + error.message, 'error');
+        setLoading(false);
+    }
 }
 
+function setLoading(isLoading) {
+    const submitButton = document.getElementById('submit-button');
+    const spinner = document.getElementById('spinner');
+    const buttonText = document.getElementById('button-text');
+    
+    submitButton.disabled = isLoading;
+    
+    if (isLoading) {
+        spinner.style.display = 'inline-block';
+        buttonText.textContent = 'Processing Payment...';
+    } else {
+        spinner.style.display = 'none';
+        buttonText.textContent = `Pay $${finalAmount.toFixed(2)}`;
+    }
+}
 
-// Initialize the app
-createPaymentForm();
+function resetForm() {
+    setTimeout(() => {
+        document.getElementById('payment-form').reset();
+        cardElement.clear();
+        setLoading(false);
+        
+        // Show reset confirmation
+        setTimeout(() => {
+            showNotification('🔄 Form reset successfully. Ready for next payment!', 'success');
+        }, 500);
+    }, 4000); // Wait 4 seconds before resetting
+}
 
+function showNotification(message, type) {
+    // Remove existing notification
+    const existing = document.querySelector('.notification');
+    if (existing) {
+        existing.remove();
+    }
+
+    // Create new notification
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+
+    // Show notification with animation
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+
+    // Auto-hide notification
+    const hideDelay = type === 'success' ? 6000 : 5000;
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 400);
+    }, hideDelay);
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Add some interactive feedback
+document.getElementById('email').addEventListener('input', function() {
+    if (this.value && !isValidEmail(this.value)) {
+        this.style.borderColor = '#dc3545';
+    } else {
+        this.style.borderColor = '#e6ebf1';
+    }
+});
+
+// Welcome message with instructions
+setTimeout(() => {
+    showNotification('💡 Enter your card details below to complete your payment securely!', 'success');
+}, 1000);
