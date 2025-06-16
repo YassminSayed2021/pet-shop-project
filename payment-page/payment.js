@@ -2,12 +2,26 @@
 const stripe = Stripe('pk_test_51RR8inRQgleRY2lfafdo5rfvbp3K3PfxedT3cculD7bbDD9EnpqMrYlzLTNW3De7t02sh1g84vipDJtFLkTx3LMf00xkZNcecU');
 const elements = stripe.elements();
 
-// Retrieve finalAmount from localStorage
-const finalAmount = parseFloat(localStorage.getItem('finalAmount')) || 0.00;
+// Function to get query parameters
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 
-// Update amount display and button text
-document.getElementById('amount-display').textContent = `Amount: $${finalAmount.toFixed(2)}`;
-document.getElementById('button-text').textContent = `Pay $${finalAmount.toFixed(2)}`;
+// Retrieve finalAmount and email from URL or localStorage
+const finalAmount = parseFloat(getQueryParam('amount')) || parseFloat(localStorage.getItem('finalAmount')) || 0.00;
+const prefilledEmail = getQueryParam('email') || '';
+
+// Update amount display, button text, and email input
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Retrieved finalAmount:', finalAmount);
+    console.log('Retrieved email:', prefilledEmail);
+    document.getElementById('amount-display').textContent = `Amount: $${finalAmount.toFixed(2)}`;
+    document.getElementById('button-text').textContent = `Pay $${finalAmount.toFixed(2)}`;
+    if (prefilledEmail) {
+        document.getElementById('email').value = decodeURIComponent(prefilledEmail);
+    }
+});
 
 // Create card element
 const cardElement = elements.create('card', {
@@ -86,23 +100,23 @@ form.addEventListener('submit', async (event) => {
 
 // Simulate complete payment processing with detailed steps
 async function simulatePayment(paymentMethod) {
-    const amount = finalAmount; // Use finalAmount from localStorage
+    const amount = finalAmount; // Use finalAmount from URL or localStorage
     const cardBrand = paymentMethod.card.brand.toUpperCase();
     const last4 = paymentMethod.card.last4;
     const email = document.getElementById('email').value;
 
     try {
         // Step 1: Validating payment method
-        showNotification('🔍 Validating payment method...', 'success');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // showNotification('🔍 Validating payment method...', 'success');
+        // await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Step 2: Processing payment
         showNotification('⚡ Processing payment...', 'success');
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         // Step 3: Confirming transaction
-        showNotification('✅ Confirming transaction...', 'success');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // showNotification('✅ Confirming transaction...', 'success');
+        // await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Check for specific test card behaviors
         if (last4 === '0002') {
@@ -134,16 +148,16 @@ async function simulatePayment(paymentMethod) {
         showNotification(successMessage, 'success');
 
         // Show additional confirmation
-        setTimeout(() => {
-            showNotification('📧 Confirmation email has been sent to ' + email, 'success');
-        }, 2000);
+        // setTimeout(() => {
+        //     showNotification('📧 Confirmation email has been sent to ' + email, 'success');
+        // }, 2000);
 
         // Redirect to index.html after successful payment
         setTimeout(() => {
             showNotification('🔄 Redirecting to home page...', 'success');
             setTimeout(() => {
                 window.location.href = '../index.html';
-            }, 1500);
+            },2000);
         }, 4000);
 
         resetForm();
@@ -178,7 +192,7 @@ function resetForm() {
         
         // Show reset confirmation
         setTimeout(() => {
-            showNotification('🔄 Form reset successfully. Ready for next payment!', 'success');
+            // showNotification('🔄 Form reset successfully. Ready for next payment!', 'success');
         }, 500);
     }, 4000); // Wait 4 seconds before resetting
 }
