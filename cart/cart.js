@@ -62,7 +62,7 @@ function renderCart() {
 window.changeQty = function(index, delta) {
   let newQty = cartItems[index].quantity + delta;
   if (newQty <= 0) {
-    const confirmDelete = confirm("Quantity is 0. Do you want to remove this item?");
+    const confirmDelete = confirm("Quantity is 0, Do you want to remove this item?");
     if (confirmDelete) {
       deleteItem(index);
     } else {
@@ -89,7 +89,7 @@ window.goToPay = function() {
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("You need to log in before checking out.");
-      window.location.href = "../login-register/login.html";
+      window.location.href = "../login-register/index.html";
       return;
     }
 
