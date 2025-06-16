@@ -1,78 +1,114 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="/pet-shop-project/images/pet-shop.png" type="image/png">
-  <title>Pet Shop - Login/Register</title>
-<link rel="icon" href="../admin/default image product.jpg" type="image/png">
-
-  <script src="https://apis.google.com/js/api.js"></script>
-
-  <script defer type="module" src="login&register.js"></script>
-  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pet Shop Login & Register 🐾</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="video-container">
-    <video autoplay loop muted playsinline>
-      <source src="download_20250515_090132_0000.mp4" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+  <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
+    <div class="row w-100 justify-content-center">
+      <!-- Video Section -->
+      <div class="col-lg-6 col-md-8 d-none d-md-block p-0" data-aos="fade-right">
+        <div class="video-container">
+          <video autoplay muted loop playsinline class="img-fluid">
+            <source src="./v.b.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+      <!-- Form Section -->
+      <div class="col-lg-4 col-md-8 col-12 p-4 form-container" data-aos="fade-left">
+        <div class="logo text-center mb-4">
+          <i class="fa-solid fa-paw fa-2x text-orange"></i>
+          <h2 class="d-inline-block ms-2">PETSHOP</h2>
+        </div>
+        <div class="switch-btns mb-4">
+          <button id="loginBtn" class="btn btn-outline-orange active me-2">Login</button>
+          <button id="registerBtn" class="btn btn-outline-orange">Register</button>
+        </div>
+        <!-- Login Form -->
+        <form id="loginForm" class="form-modern">
+          <div class="mb-3">
+            <label for="email" class="form-label"><i class="fa-solid fa-envelope me-1"></i> Email address</label>
+            <input type="email" class="form-control" id="email" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label"><i class="fa-solid fa-lock me-1"></i> Password</label>
+            <input type="password" class="form-control" id="password" required>
+            <a href="#" class="d-block text-orange small mt-1" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn btn-orange w-100 mb-3"><i class="fa-solid fa-sign-in-alt me-1"></i> Login</button>
+          <button type="button" id="googleLoginBtn" class="btn btn-outline-secondary w-100 google-btn">
+            <img src="https://www.google.com/favicon.ico" alt="Google"> Login with Google
+          </button>
+        </form>
+        <!-- Register Form -->
+        <form id="registerForm" class="form-modern hidden">
+          <div class="mb-3">
+            <label for="reg-email" class="form-label"><i class="fa-solid fa-envelope me-1"></i> Email address</label>
+            <input type="email" class="form-control" id="reg-email" required>
+          </div>
+          <div class="mb-3">
+            <label for="reg-password" class="form-label"><i class="fa-solid fa-lock me-1"></i> Password</label>
+            <input type="password" class="form-control" id="reg-password" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirm-password" class="form-label"><i class="fa-solid fa-lock me-1"></i> Confirm Password</label>
+            <input type="password" class="form-control" id="confirm-password" required>
+          </div>
+          <button type="submit" class="btn btn-orange w-100 mb-3"><i class="fa-solid fa-user-plus me-1"></i> Register</button>
+          <button type="button" id="googleRegisterBtn" class="btn btn-outline-secondary w-100 google-btn">
+            <img src="https://www.google.com/favicon.ico" alt="Google"> Register with Google
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 
-  <div class="form-container" id="formContainer">
-    <div class="logo">
-      <img src="PET_SHOP_PIC-removebg-preview (1).png" alt="Pet Shop Logo" />
-      <h2>PETSHOP</h2>
+  <!-- Forgot Password Modal -->
+  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-orange text-white">
+          <h5 class="modal-title" id="forgotPasswordModalLabel"><i class="fa-solid fa-paw me-2"></i> Reset Password</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="forgotPasswordForm">
+            <div class="mb-3">
+              <label for="reset-email" class="form-label"><i class="fa-solid fa-envelope me-1"></i> Email address</label>
+              <input type="email" class="form-control" id="reset-email" required>
+            </div>
+            <button type="submit" class="btn btn-orange w-100"><i class="fa-solid fa-paper-plane me-1"></i> Send Reset Link</button>
+          </form>
+        </div>
+      </div>
     </div>
-    <div class="switch-btns">
-      <button class="btn btn-outline-success active" id="loginBtn">Login</button>
-      <button class="btn btn-outline-success" id="registerBtn" >Register</button>
-    </div>
-<!-- login -->
-    <form id="loginForm">
-      <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
-        <input type="email" class="form-control" id="email" placeholder="Enter your email" required />
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Enter your password" required />
-      </div>
-      <button type="submit" class="btn btn-success w-100">Login</button>
-
-      <button type="button" class="btn btn-outline-danger w-100 mt-2 google-btn" id="googleLoginBtn">
-        <img src="https://img.icons8.com/color/20/000000/google-logo.png" />
-        Login with Google
-      </button>
-    </form>
-<!-- Register -->
-    <form id="registerForm" class="hidden">
-      <div class="mb-3">
-        <label for="reg-email" class="form-label">Email address</label>
-        <input type="email" class="form-control" id="reg-email" placeholder="Enter your email" required />
-      </div>
-      <div class="mb-3">
-        <label for="reg-password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="reg-password" placeholder="Enter your password" required />
-      </div>
-      <div class="mb-3">
-        <label for="confirm-password" class="form-label">Confirm Password</label>
-        <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your password" required />
-      </div>
-      <button type="submit" class="btn btn-success w-100">Register</button>
-
-      <button type="button" class="btn btn-outline-danger w-100 mt-2 google-btn" id="googleRegisterBtn">
-        <img src="https://img.icons8.com/color/20/000000/google-logo.png" />
-        Register with Google
-      </button>
-    </form>
   </div>
 
-  <img src="dog-in-a-cart-with-groceries-e1701359721243-removebg-preview.png" alt="Dog with shopping cart" class="dog-cart" />
+  <!-- Toast Container -->
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header bg-orange text-white">
+        <i class="fa-solid fa-paw me-2"></i>
+        <strong class="me-auto">Notification</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body"></div>
+    </div>
+  </div>
 
-  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+  <script type="module" src="./login&register.js"></script>
 </body>
 </html>

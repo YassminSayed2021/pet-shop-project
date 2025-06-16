@@ -1,115 +1,168 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Pet Shop</title>
-    <link rel="icon" href="default image product.jpg" type="image/png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="admin.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script defer type="module" src="admin.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pet Shop Admin 🐾</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <div class="container">
-       
-        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Pet Shop Icon" style="width:50px; height:50px; vertical-align: middle; margin-right: 8px;">
-        
-       
-        <nav class="navbar navbar-light bg-light">
-            <div class="container-fluid">
-                <h2>Pet Shop Admin 🐾</h2>
-                <a href="../admin-orders-page/orders-dashboard-page.html"><button class="btn btn-success">User orders</button></a>
-                
-                <button id="logoutBtn" class="btn btn-danger">Logout</button>
-            </div>
-        </nav>
-
-        
-        <div class="dashboard-card">
-            <h3>Admin Dashboard</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Total Products:</strong> <span id="totalProducts">0</span></p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Total Admins:</strong> <span id="totalAdmins">0</span></p>
-                </div>
-            </div>
-        </div>
-
-        
-        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab" aria-controls="products" aria-selected="true">🐾 Manage Products</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab" aria-controls="admins" aria-selected="false">🐾 Manage Admins</button>
-            </li>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-orange">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="fa-solid fa-paw me-2"></i>Pet Shop Admin</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-solid fa-bone me-1"></i>Manage Products
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#productSearch2">View Products</a></li>
+              <li><a class="dropdown-item" href="#productForm">Add Product</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="adminsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-solid fa-users me-1"></i>Manage Admins
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#admins">View Admins</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../admin-orders-page/orders-dashboard-page.html"><i class="fa-solid fa-shopping-cart me-1"></i>User Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="logoutBtn"><i class="fa-solid fa-sign-out-alt me-1"></i>Logout</a>
+          </li>
         </ul>
-
-        
-        <div class="tab-content" id="adminTabContent">
-            <!-- Products  -->
-            <div class="tab-pane fade show active" id="products" role="tabpanel" aria-labelledby="products-tab">
-                <form id="productForm" class="mb-5">
-                    <div class="mb-3">
-                        <label for="productName" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="productName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="productPrice" class="form-label">Price</label>
-                        <input type="number" step="0.01" class="form-control" id="productPrice" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="productDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="productDescription" rows="4"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="productImage" class="form-label">Product Image</label>
-                        <input type="file" class="form-control" id="productImage" accept="image/*">
-                        <small class="form-text text-muted">Leave empty to keep current image when editing</small>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save Product</button>
-                </form>
-
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Description</th>
-                            <th>Image</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productList">
-                        <tr><td colspan="5" class="loading-message">Loading products...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Admins  -->
-            <div class="tab-pane fade" id="admins" role="tabpanel" aria-labelledby="admins-tab">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userList">
-                        <tr><td colspan="3" class="loading-message">Loading users...</td></tr>
-                    </tbody>
-                </table>
-                <div id="userError" class="error-message" style="display: none;"></div>
-            </div>
-        </div>
+      </div>
     </div>
-   <!-- Scroll up -->
-<button id="scrollTopBtn" class="btn rounded-circle text-white shadow" title="up">^</button>
+  </nav>
 
-    
+  <div class="container mt-4">
+    <h2 data-aos="fade-up"><i class="fa-solid fa-paw me-2"></i>Admin Dashboard</h2>
+    <div class="row" data-aos="fade-up" data-aos-delay="100">
+      <div class="col-md-6 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5><i class="fa-solid fa-bone me-2"></i>Total Products: <span id="totalProducts">0</span></h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5><i class="fa-solid fa-users me-2"></i>Total Admins: <span id="totalAdmins">0</span></h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="products" class="mt-5" data-aos="fade-up">
+      <h3><i class="fa-solid fa-bone me-2"></i>Manage Products</h3>
+      <div class="card mb-4">
+        <div class="card-body">
+          <form id="productForm" class="form-modern">
+            <div class="mb-3 position-relative">
+              <label for="productName" class="form-label">Product Name</label>
+              <input type="text" class="form-control" id="productName" required>
+            </div>
+            <div class="mb-3 position-relative">
+              <label for="productPrice" class="form-label">Price</label>
+              <input type="number" step="0.01" class="form-control" id="productPrice" required>
+            </div>
+            <div class="mb-3 position-relative">
+              <label for="productStock" class="form-label">Stock Quantity</label>
+              <input type="number" class="form-control" id="productStock" required>
+            </div>
+            <div class="mb-3 position-relative">
+              <label for="productRating" class="form-label">Rating (0-5)</label>
+              <input type="number" step="0.1" min="0" max="5" class="form-control" id="productRating" required>
+            </div>
+            <div class="mb-3 position-relative">
+              <label for="productDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="productDescription"></textarea>
+            </div>
+            <div class="mb-3 position-relative">
+              <label for="productImage" class="form-label">Product Image</label>
+              <input type="file" class="form-control" id="productImage" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-primary btn-modern"><i class="fa-solid fa-save me-2"></i>Save Product</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="mb-3" id="productSearch2">
+        <input type="text" id="productSearch" class="form-control" placeholder="Search products by name...">
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th >Product Name</th>
+                <th>Price</th>
+                <th>Stock Quantity</th>
+                <th>Rating</th>
+                <th>Description</th>
+                <th>Product Image</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productList"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="admins" class="mt-5" data-aos="fade-up">
+      <h3><i class="fa-solid fa-users me-2"></i>Manage Admins</h3>
+      <div class="mb-3">
+        <input type="text" id="userSearch" class="form-control" placeholder="Search users by email...">
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="userList"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <i class="fa-solid fa-paw me-2"></i>
+        <strong class="me-auto">Notification</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body"></div>
+    </div>
+  </div>
+
+  <button id="scrollTopBtn" class="btn btn-primary btn-modern"><i class="fa-solid fa-chevron-up"></i></button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+  <script type="module" src="admin.js"></script>
 </body>
 </html>
