@@ -1,4 +1,3 @@
-
 import { auth, provider, db } from "./firebaseConfig.js";
 import {
   createUserWithEmailAndPassword,
@@ -10,11 +9,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
 
-// Wait for DOM to load
+// wait for DOM to load
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM loaded, initializing login/register script');
 
-  // Get DOM elements
+  // get DOM elements
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
   const loginBtn = document.getElementById('loginBtn');
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toast.show();
   }
 
-  // Redirect based on user role
+  // redirect based on user role
   async function getRedirectUrl(user) {
     try {
       console.log(`Fetching role for user: ${user.uid} (${user.email})`);
@@ -107,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showRegister();
   });
 
-  // Validation
+  // validation
   function isValidEmail(email) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
@@ -118,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return passwordPattern.test(password);
   }
 
-  // Forgot Password
+  // forgot Password
   forgotPasswordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     console.log('Forgot password form submitted');
@@ -151,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Register
+  // register
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     console.log('Register form submitted');
@@ -205,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Login
+  // login
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     console.log('Login form submitted');
@@ -260,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Google Sign-In
+  // google Sign-In
   async function handleGoogleSignIn(isRegister) {
     console.log(`Google Sign-In triggered, isRegister: ${isRegister}`);
     try {
@@ -317,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
     handleGoogleSignIn(true);
   });
 
-  // Handle authenticated users
+  // handle authenticated users
   onAuthStateChanged(auth, async (user) => {
     console.log("Auth state checked, user:", user ? { uid: user.uid, email: user.email } : null);
     if (user) {
@@ -344,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Initialize with login form
+  // initialize with login form
   console.log('Initializing with login form');
   showLogin();
 });

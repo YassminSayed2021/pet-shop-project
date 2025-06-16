@@ -1,4 +1,3 @@
-
 import { db, auth } from "../login-register/firebaseConfig.js";
 import {
   collection, addDoc, getDocs, doc, deleteDoc,
@@ -35,7 +34,7 @@ function showToast(message) {
   toast.show();
 }
 
-// Logout button
+// logout button
 logoutBtn?.addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -46,7 +45,7 @@ logoutBtn?.addEventListener("click", async () => {
   }
 });
 
-// Check if user is logged in and has admin role
+// check if user is logged in and has admin role
 onAuthStateChanged(auth, async (user) => {
   if (!window.location.pathname.includes("admin.html")) return;
   if (!user) return window.location.replace("../login-register/index.html");
@@ -72,7 +71,7 @@ onAuthStateChanged(auth, async (user) => {
   fetchUsers();
 });
 
-// Upload images to Cloudinary
+// upload images to Cloudinary
 async function uploadImage(file) {
   const formData = new FormData();
   formData.append("file", file);
@@ -82,7 +81,7 @@ async function uploadImage(file) {
   return data.secure_url || null;
 }
 
-// Add or edit product
+// add or edit product
 productForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = productForm["productName"].value;
@@ -135,7 +134,7 @@ productForm?.addEventListener("submit", async (e) => {
   }
 });
 
-// Display products
+// display products
 async function fetchProducts() {
   productList.innerHTML = "<tr><td colspan='7'>Loading...</td></tr>";
   try {
@@ -263,7 +262,7 @@ function renderProduct(p) {
   productList.appendChild(tr);
 }
 
-// Display users
+// display users
 async function fetchUsers() {
   userList.innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
   try {
@@ -312,7 +311,7 @@ function renderUser(user) {
   userList.appendChild(tr);
 }
 
-// Search functionality
+// search functionality
 productSearch?.addEventListener("input", () => {
   const query = productSearch.value.toLowerCase();
   productList.innerHTML = "";
